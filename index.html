@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6d7dfc">
+<title>Equilíbrio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f7ff;--card:#fff;--text:#26304a;--muted:#7d8498;
+  --primary:#6978f5;--primary2:#8995ff;--line:#e8eaf3;
+  --green:#67c6a0;--pink:#ed91b3;--yellow:#f2c66d;--shadow:0 12px 35px rgba(55,65,120,.10)
+}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:#eef1f8;color:var(--text);min-height:100vh}
+button,input,textarea{font:inherit}
+button{border:0;cursor:pointer}
+.hidden{display:none!important}
+
+/* Tela de acesso */
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+background:linear-gradient(135deg,#eef1ff,#f8f5ff)}
+.phone-auth{width:min(100%,430px);background:var(--card);border-radius:32px;padding:32px 25px;box-shadow:var(--shadow)}
+.logo{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--primary),#a28cf8);display:grid;place-items:center;color:#fff;font-size:29px;margin:0 auto 18px}
+.auth-title{text-align:center;font-size:27px;margin-bottom:7px}
+.auth-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px}
+.tabs{display:flex;background:#f2f3fa;border-radius:14px;padding:4px;margin-bottom:20px}
+.tabs button{flex:1;padding:11px;border-radius:11px;background:transparent;color:var(--muted)}
+.tabs button.active{background:#fff;color:var(--primary);box-shadow:0 3px 10px #dfe2ed}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;outline:none;background:#fbfbfe;color:var(--text)}
+.field input:focus,.field textarea:focus{border-color:var(--primary)}
+.primary{width:100%;background:var(--primary);color:white;padding:14px;border-radius:13px;font-weight:700;margin-top:4px}
+.msg{text-align:center;font-size:13px;color:#d05d7e;min-height:20px;margin-top:10px}
+.demo-note{font-size:11px;text-align:center;color:var(--muted);margin-top:15px;line-height:1.4}
+
+/* Aplicativo */
+#app{display:none;min-height:100vh}
+.layout{display:flex;max-width:1200px;margin:auto;min-height:100vh}
+.sidebar{width:245px;background:#fff;border-right:1px solid var(--line);padding:26px 16px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 30px;font-weight:800;font-size:21px}
+.brand-icon{width:39px;height:39px;border-radius:12px;background:var(--primary);display:grid;place-items:center;color:white}
+.nav button{display:flex;width:100%;align-items:center;gap:12px;padding:13px 14px;border-radius:13px;background:transparent;color:var(--muted);margin-bottom:5px;text-align:left}
+.nav button.active{background:#eef0ff;color:var(--primary);font-weight:700}
+.side-bottom{position:absolute;bottom:22px;left:16px;right:16px}
+.logout{color:#d66a88!important}
+.main{flex:1;padding:25px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.greeting{font-size:25px;font-weight:800}
+.date{font-size:13px;color:var(--muted);margin-top:4px}
+.avatar{width:43px;height:43px;border-radius:50%;background:#e9ecff;color:var(--primary);display:grid;place-items:center;font-weight:800}
+.content{max-width:900px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 5px 20px rgba(50,60,110,.05);border:1px solid #f0f1f6}
+.card h3{font-size:16px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:13px;line-height:1.5}
+.big-card{margin-top:15px}
+.progress{height:9px;background:#edf0f7;border-radius:99px;overflow:hidden;margin:13px 0 7px}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#9a8af5);border-radius:99px}
+.section-title{font-size:21px;font-weight:800;margin-bottom:5px}
+.section-sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.add-row{display:flex;gap:9px;margin-bottom:15px}
+.add-row input{flex:1;border:1px solid var(--line);border-radius:13px;padding:13px;outline:none}
+.add-row button{background:var(--primary);color:#fff;border-radius:13px;padding:0 18px;font-weight:700}
+.task{display:flex;align-items:center;gap:11px;padding:13px;border-bottom:1px solid #f0f1f5}
+.task:last-child{border-bottom:0}
+.task input{accent-color:var(--primary)}
+.task.done span{text-decoration:line-through;color:#aaa}
+.empty{color:var(--muted);font-size:13px;padding:20px;text-align:center}
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0 18px}
+.mood{padding:14px 4px;border-radius:15px;background:#f5f6fb;text-align:center;font-size:23px}
+.mood small{display:block;font-size:10px;color:var(--muted);margin-top:5px}
+.mood.selected{outline:2px solid var(--primary);background:#eef0ff}
+textarea{resize:vertical;min-height:110px}
+.note{padding:15px;border:1px solid var(--line);border-radius:15px;margin-top:10px;background:#fcfcff}
+.note small{color:var(--muted)}
+.stat{font-size:30px;font-weight:800;color:var(--primary)}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#28304b;color:#fff;padding:11px 17px;border-radius:12px;font-size:13px;z-index:50}
+
+/* Mobile */
+.mobile-nav{display:none}
+@media(max-width:760px){
+ body{background:#f5f7ff}
+ .sidebar{display:none}
+ .layout{display:block}
+ .main{padding:17px 15px 88px}
+ .top{margin-bottom:18px}
+ .greeting{font-size:21px}
+ .grid{grid-template-columns:1fr 1fr}
+ .grid .card:last-child{grid-column:1/-1}
+ .card{padding:16px;border-radius:17px}
+ .mobile-nav{display:flex;position:fixed;z-index:20;bottom:10px;left:10px;right:10px;background:rgba(255,255,255,.96);border:1px solid var(--line);box-shadow:0 10px 30px rgba(40,50,100,.14);border-radius:20px;padding:7px}
+ .mobile-nav button{flex:1;background:transparent;color:var(--muted);padding:8px 2px;border-radius:13px;font-size:10px}
+ .mobile-nav button.active{color:var(--primary);background:#eef0ff}
+ .mobile-nav b{display:block;font-size:18px;margin-bottom:2px}
+ .add-row button{padding:0 14px}
+ .moods{gap:5px}
+ .mood{padding:11px 2px}
+}
+</style>
+</head>
+<body>
+
+<section id="auth">
+  <div class="phone-auth">
+    <div class="logo">☁</div>
+    <h1 class="auth-title">Equilíbrio</h1>
+    <p class="auth-sub">Sua rotina, seu bem-estar, no seu ritmo.</p>
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showAuth('login')">Entrar</button>
+      <button id="registerTab" onclick="showAuth('register')">Criar conta</button>
+    </div>
+    <form id="authForm">
+      <div class="field"><label>Nome</label><input id="name" placeholder="Seu nome"></div>
+      <div class="field"><label>E-mail</label><input id="email" type="email" placeholder="voce@email.com" required></div>
+      <div class="field"><label>Senha</label><input id="pass" type="password" placeholder="••••••••" required></div>
+      <button class="primary" type="submit" id="authBtn">Entrar</button>
+      <div class="msg" id="authMsg"></div>
+    </form>
+    <p class="demo-note">Protótipo demonstrativo para o projeto Equilíbrio. Os dados ficam somente neste navegador.</p>
+  </div>
+</section>
+
+<section id="app">
+ <div class="layout">
+  <aside class="sidebar">
+   <div class="brand"><span class="brand-icon">☁</span> Equilíbrio</div>
+   <nav class="nav">
+    <button data-page="inicio" class="active" onclick="go('inicio')">⌂ &nbsp; Início</button>
+    <button data-page="planner" onclick="go('planner')">✓ &nbsp; Planner</button>
+    <button data-page="bemestar" onclick="go('bemestar')">♡ &nbsp; Bem-estar</button>
+    <button data-page="diario" onclick="go('diario')">✎ &nbsp; Diário</button>
+    <button data-page="relatorios" onclick="go('relatorios')">◔ &nbsp; Relatórios</button>
+   </nav>
+   <div class="side-bottom"><button class="nav logout" onclick="logout()">↪ &nbsp; Sair</button></div>
+  </aside>
+
+  <main class="main">
+   <header class="top">
+    <div><div class="greeting" id="greeting">Olá!</div><div class="date" id="date"></div></div>
+    <div class="avatar" id="avatar">E</div>
+   </header>
+   <div class="content" id="content"></div>
+  </main>
+ </div>
+ <nav class="mobile-nav">
+  <button data-page="inicio" class="active" onclick="go('inicio')"><b>⌂</b>Início</button>
+  <button data-page="planner" onclick="go('planner')"><b>✓</b>Planner</button>
+  <button data-page="bemestar" onclick="go('bemestar')"><b>♡</b>Bem-estar</button>
+  <button data-page="diario" onclick="go('diario')"><b>✎</b>Diário</button>
+  <button data-page="relatorios" onclick="go('relatorios')"><b>◔</b>Relatórios</button>
+ </nav>
+</section>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const KEY='equilibrio_demo_user';
+const DATA='equilibrio_demo_data';
+let page='inicio';
+let authMode='login';
+
+function $(id){return document.getElementById(id)}
+function user(){return JSON.parse(localStorage.getItem(KEY)||'null')}
+function data(){
+ const d=JSON.parse(localStorage.getItem(DATA)||'null');
+ return d||{tasks:[],mood:null,notes:[]};
+}
+function save(d){localStorage.setItem(DATA,JSON.stringify(d))}
+function showAuth(mode){
+ authMode=mode;
+ $('loginTab').classList.toggle('active',mode==='login');
+ $('registerTab').classList.toggle('active',mode==='register');
+ $('name').style.display=mode==='register'?'block':'none';
+ $('authBtn').textContent=mode==='register'?'Criar minha conta':'Entrar';
+ $('authMsg').textContent='';
+}
+function boot(){
+ const u=user();
+ if(u){openApp();} else {showAuth('login');}
+}
+$('authForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const email=$('email').value.trim().toLowerCase(), pass=$('pass').value, name=$('name').value.trim();
+ if(authMode==='register'){
+   if(!name){$('authMsg').textContent='Digite seu nome.';return}
+   localStorage.setItem(KEY,JSON.stringify({name,email,pass}));
+   localStorage.setItem(DATA,JSON.stringify({tasks:[],mood:null,notes:[]}));
+   openApp(); toast('Conta criada! Bem-vinda ao Equilíbrio.');
+ }else{
+   const u=user();
+   if(!u || u.email!==email || u.pass!==pass){$('authMsg').textContent='E-mail ou senha incorretos.';return}
+   openApp();
+ }
+});
+function openApp(){
+ $('auth').style.display='none'; $('app').style.display='block';
+ const u=user(); $('greeting').textContent='Olá, '+(u?.name||'')+'!';
+ $('avatar').textContent=(u?.name||'E').charAt(0).toUpperCase();
+ $('date').textContent=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'numeric',month:'long'}).format(new Date());
+ go(page);
+}
+function go(p){
+ page=p;
+ document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
+ render();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function render(){
+ const d=data(), done=d.tasks.filter(x=>x.done).length, total=d.tasks.length, pct=total?Math.round(done/total*100):0;
+ if(page==='inicio') $('content').innerHTML=`
+  <h2 class="section-title">Como está seu dia?</h2><p class="section-sub">Pequenos passos também contam.</p>
+  <div class="grid">
+   <div class="card"><h3>☀️ Hoje</h3><p>${total?done+' de '+total+' tarefas concluídas.':'Você ainda não adicionou tarefas.'}</p></div>
+   <div class="card"><h3>💜 Bem-estar</h3><p>${d.mood?'Seu humor hoje: '+d.mood+'.':'Registre como você está se sentindo.'}</p></div>
+   <div class="card"><h3>📝 Diário</h3><p>${d.notes.length?'Você tem '+d.notes.length+' registro(s).':'Escreva algumas linhas sobre seu dia.'}</p></div>
+  </div>
+  <div class="card big-card"><h3>Progresso da rotina</h3><div class="progress"><span style="width:${pct}%"></span></div><p>${pct}% das tarefas concluídas</p></div>`;
+ if(page==='planner') $('content').innerHTML=`
+  <h2 class="section-title">Planner</h2><p class="section-sub">Organize seu dia sem deixar tudo pesado.</p>
+  <div class="card">
+   <div class="add-row"><input id="taskInput" placeholder="Ex.: estudar para a prova"><button onclick="addTask()">Adicionar</button></div>
+   <div>${d.tasks.length?d.tasks.map((t,i)=>`<div class="task ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i})"><span>${esc(t.text)}</span></div>`).join(''):'<div class="empty">Nenhuma tarefa por enquanto. ✨</div>'}</div>
+  </div>`;
+ if(page==='bemestar') $('content').innerHTML=`
+  <h2 class="section-title">Bem-estar</h2><p class="section-sub">Pare um pouquinho e perceba como você está.</p>
+  <div class="card"><h3>Como você está hoje?</h3><div class="moods">
+   ${[['😞','Difícil'],['😕','Baixo'],['😐','Ok'],['🙂','Bem'],['😄','Ótimo']].map(x=>`<button class="mood ${d.mood===x[1]?'selected':''}" onclick="setMood('${x[1]}')">${x[0]}<small>${x[1]}</small></button>`).join('')}
+  </div><p>Não existe resposta certa. O registro serve para você acompanhar seu próprio ritmo.</p></div>
+  <div class="card big-card"><h3>🌿 Modo desacelerar</h3><p>Reserve alguns minutos longe das notificações, respire e faça uma atividade tranquila.</p><button class="primary" style="margin-top:14px" onclick="toast('Momento de desacelerar iniciado por 10 minutos 🌿')">Começar</button></div>`;
+ if(page==='diario') $('content').innerHTML=`
+  <h2 class="section-title">Diário</h2><p class="section-sub">Um espaço simples para colocar seus pensamentos no papel.</p>
+  <div class="card"><div class="field"><textarea id="noteInput" placeholder="Como foi seu dia? O que você quer registrar?"></textarea></div><button class="primary" onclick="addNote()">Salvar registro</button></div>
+  ${d.notes.map(n=>`<div class="note"><small>${n.date}</small><p style="margin-top:7px;line-height:1.5">${esc(n.text)}</p></div>`).join('')}`;
+ if(page==='relatorios') $('content').innerHTML=`
+  <h2 class="section-title">Relatórios</h2><p class="section-sub">Uma visão rápida dos seus registros.</p>
+  <div class="grid">
+   <div class="card"><p>Tarefas concluídas</p><div class="stat">${done}</div></div>
+   <div class="card"><p>Total de tarefas</p><div class="stat">${total}</div></div>
+   <div class="card"><p>Registros no diário</p><div class="stat">${d.notes.length}</div></div>
+  </div>
+  <div class="card big-card"><h3>Seu acompanhamento</h3><p>Use estes dados como um retrato da sua rotina, não como uma cobrança. O objetivo do Equilíbrio é ajudar você a perceber padrões e fazer pequenos ajustes.</p></div>`;
+}
+function addTask(){const i=$('taskInput'),v=i.value.trim();if(!v)return;const d=data();d.tasks.push({text:v,done:false});save(d);render();toast('Tarefa adicionada!')}
+function toggleTask(i){const d=data();d.tasks[i].done=!d.tasks[i].done;save(d);render()}
+function setMood(m){const d=data();d.mood=m;save(d);render();toast('Humor registrado 💜')}
+function addNote(){const i=$('noteInput'),v=i.value.trim();if(!v)return;const d=data();d.notes.unshift({text:v,date:new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date())});save(d);render();toast('Registro salvo!')}
+function logout(){localStorage.removeItem(KEY);localStorage.removeItem(DATA);location.reload()}
+function toast(t){const x=$('toast');x.textContent=t;x.classList.remove('hidden');clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.add('hidden'),2200)}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+boot();
+</script>
+</body>
+</html>
